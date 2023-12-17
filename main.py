@@ -9,6 +9,7 @@ import chess.svg
 import cairosvg
 
 from randomAI import RandomAI
+from greedyAI import GreedyAI
 
 class ChessGUI:
     def __init__(self, root):
@@ -26,7 +27,7 @@ class ChessGUI:
         self.side_frame = ttk.Frame(root, width=100, height=self.board_size)
         self.side_frame.grid(row=0, column=0)
 
-        self.white_player = RandomAI()
+        self.white_player = GreedyAI()
         self.black_player = RandomAI()
 
         self.white_label = ttk.Label(self.side_frame, text=self.white_player.name)
