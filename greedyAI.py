@@ -23,12 +23,21 @@ class GreedyAI(PlayerAI):
         # Choose random legal move as backup
         return self.get_random_move(board)
     
-    def get_random_move(self, board):
+    def get_random_move(self, board: chess.Board):
         # Get valid moves and choose random one
         legal_moves = list(board.legal_moves)
         
         move = None
-        if legal_moves:
-          move = legal_moves[random.randint(0, len(legal_moves)-1)]
+        if legal_moves == None:
+          return None
         
-        return move
+        move = legal_moves[random.randint(0, len(legal_moves)-1)]
+        board.push(move)
+        # Try to avoid stalemate
+        if board.is_stalemate() and len(legal_moves) > 1:
+            board.pop()
+            return self.get_random_move(board)
+        else:
+            board.pop()
+            return move
+        

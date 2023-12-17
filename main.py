@@ -44,6 +44,9 @@ class ChessGUI:
         reset_btn = ttk.Button(self.side_frame, text="Reset", command=self.reset_board)
         reset_btn.pack()
 
+        self.outcome_label = ttk.Label(self.side_frame, text="")
+        self.outcome_label.pack()
+
         # Create bottombar
         self.bottom_frame = ttk.Frame(root, width=self.board_size + 100, height=300)
         self.bottom_frame.grid(row=1, column=0, columnspan=2)
@@ -105,6 +108,7 @@ class ChessGUI:
     def run_simulation(self):
         if self.board.is_game_over():
             self.reset_board()
+        self.outcome_label.configure(text="")
         self.play()
 
     def get_player(self):
@@ -122,12 +126,13 @@ class ChessGUI:
                 return
             
             self.board.push(move)
-            print(self.get_color_str(), "moves", self.board.peek())
             self.draw_chessboard()
             
-            self.root.after(10, self.play)
+            self.root.after(1, self.play)
         else:
             print("Outcome", self.board.outcome().result())
+            self.outcome_label.configure(text=self.board.outcome().result())
+            self.draw_chessboard()
     
 
         
