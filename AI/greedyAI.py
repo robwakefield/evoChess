@@ -4,6 +4,10 @@ from AI.playerAI import PlayerAI
 import chess
 import random
 
+"""
+Always captures the highest value opponent piece if it can.
+If there is no opportunity to capture, pick a random legal move avoiding stalemate.
+"""
 class GreedyAI(PlayerAI):
     
     def __init__(self):

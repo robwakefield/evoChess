@@ -3,6 +3,9 @@
 from AI.playerAI import PlayerAI
 import random
 
+"""
+Chooses a random legal move every turn.
+"""
 class RandomAI(PlayerAI):
     
     def __init__(self):

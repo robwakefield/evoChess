@@ -6,6 +6,7 @@ from chessMatch import ChessMatch
 
 from AI.greedyAI import GreedyAI
 from AI.randomAI import RandomAI
+from AI.defensiveAI import DefensiveAI
   
 class Head2Head(): 
   
@@ -47,6 +48,7 @@ class Head2Head():
 
 if __name__ == "__main__":
     greedy = GreedyAI()
+    defensive = DefensiveAI()
     random = RandomAI()
-    h2h = Head2Head(greedy, random)
-    h2h.evaluate(iterations=1000)
+    h2h = Head2Head(defensive, greedy)
+    h2h.evaluate(iterations=100)
