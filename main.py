@@ -8,8 +8,8 @@ import chess
 import chess.svg
 import cairosvg
 
-from randomAI import RandomAI
-from greedyAI import GreedyAI
+from AI.randomAI import RandomAI
+from AI.greedyAI import GreedyAI
 
 class ChessGUI:
     def __init__(self, root):

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import chess
-from playerAI import PlayerAI
+from AI.playerAI import PlayerAI
 from chessMatch import ChessMatch
 
-from greedyAI import GreedyAI
-from randomAI import RandomAI
+from AI.greedyAI import GreedyAI
+from AI.randomAI import RandomAI
   
 class Head2Head(): 
   

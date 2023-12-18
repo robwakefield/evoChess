@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from playerAI import PlayerAI
+from AI.playerAI import PlayerAI
 import chess
 import random
 
