@@ -11,6 +11,7 @@ import cairosvg
 from AI.randomAI import RandomAI
 from AI.greedyAI import GreedyAI
 from AI.defensiveAI import DefensiveAI
+from AI.stockfishAI import StockfishAI
 
 class ChessGUI:
     def __init__(self, root):
@@ -28,7 +29,7 @@ class ChessGUI:
         self.side_frame = ttk.Frame(root, width=100, height=self.board_size)
         self.side_frame.grid(row=0, column=0)
 
-        self.white_player = DefensiveAI()
+        self.white_player = StockfishAI()
         self.black_player = GreedyAI()
 
         self.white_label = ttk.Label(self.side_frame, text=self.white_player.name)
