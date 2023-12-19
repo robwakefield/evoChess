@@ -4,6 +4,8 @@ import sys
 from AI.playerAI import PlayerAI
 import chess
 import AI.PST as PST
+from concurrent.futures import ThreadPoolExecutor
+import random 
 
 INT_MIN = -sys.maxsize - 1
 INT_MAX = sys.maxsize
@@ -13,32 +15,35 @@ Uses piece square tables with alpha-beta pruned minimax to evaluate each legal m
 """
 class SingleTableAI(PlayerAI):
     
-    def __init__(self, depth=2):
+    def __init__(self, depth=2, threads=8):
        self.name = "Single Table (d={})".format(depth)
        self.depth = depth
        self.in_endgame = False
+       self.threads = threads
 
     def make_move(self, board: chess.Board):
-        # Update search depth when in endgame
         self.in_endgame = self.is_endgame(board)
-        if self.in_endgame and self.depth == 2:
-            self.depth = 4
 
         legal_moves = list(board.legal_moves)
+        random.shuffle(legal_moves)
         assert len(legal_moves) > 0
+
+        # Construct list of class containing move and score to enable threading
+        scores = [MoveScore(move) for move in legal_moves]
+
+        pool = ThreadPoolExecutor(max_workers=self.threads)
+        for i, move in enumerate(legal_moves):
+            pool.submit(self.score_move(board, move, scores[i]))
+        pool.shutdown()
         
-        best_move = legal_moves[0]
-        best_score = INT_MIN
-        for move in legal_moves:
-            board.push(move)
-            score = self.alphabeta(board, self.depth, color=1-board.turn)
-            board.pop()
-            if score > best_score:
-                best_move = move
-                best_score = score
-        #print("best move", best_move, "score", best_score)
-        return best_move
-  
+        # Return best move
+        return [ms.move for ms in sorted(scores, key=lambda m_score: m_score.score)][-1]
+    
+    def score_move(self, board, move, move_score):
+        board.push(move)
+        move_score.score = self.alphabeta(board, self.depth, color=1-board.turn)
+        board.pop()
+    
     def alphabeta(self, board: chess.Board, depth, color, alpha=INT_MIN, beta=INT_MAX, mini=True):
         if board.is_game_over():
             if board.outcome().winner == None:
@@ -116,3 +121,8 @@ class SingleTableAI(PlayerAI):
                 positional += table[square]
 
         return material + positional
+
+class MoveScore():
+    def __init__(self, move):
+        self.move = move
+        self.score = INT_MIN

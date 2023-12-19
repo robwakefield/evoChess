@@ -5,6 +5,7 @@ from AI.playerAI import PlayerAI
 import chess
 import random
 from math import exp, sqrt
+from concurrent.futures import ThreadPoolExecutor
 
 INT_MIN = -sys.maxsize - 1
 INT_MAX = sys.maxsize
@@ -14,11 +15,12 @@ Updates piece square tables and piece material values using an evolutionary algo
 """
 class EvoTableAI(PlayerAI):
     
-    def __init__(self, depth=2, material_val={}, table={},
+    def __init__(self, depth=2, threads=8, material_val={}, table={},
                  material_strat_param={}, table_strat_param={}):
         self.name = "Evo Table (d={})".format(depth)
         self.depth = depth
         self.in_endgame = False
+        self.threads = threads
         
         self.num_params = 64 * len(chess.PIECE_TYPES) + len(chess.PIECE_TYPES) - 1
         self.tau = 1 / sqrt(2 * self.num_params)
@@ -45,25 +47,27 @@ class EvoTableAI(PlayerAI):
             self.table_strat_param[type] = [random.uniform(0, 0.05) for _ in range(64)]
     
     def make_move(self, board: chess.Board):
-        # Update search depth when in endgame
         self.in_endgame = self.is_endgame(board)
-        if self.in_endgame and self.depth == 2:
-            self.depth = 4
 
         legal_moves = list(board.legal_moves)
+        random.shuffle(legal_moves)
         assert len(legal_moves) > 0
+    
+        # Construct list of class containing move and score to enable threading
+        scores = [MoveScore(move) for move in legal_moves]
+
+        pool = ThreadPoolExecutor(max_workers=self.threads)
+        for i, move in enumerate(legal_moves):
+            pool.submit(self.score_move(board, move, scores[i]))
+        pool.shutdown()
         
-        best_move = legal_moves[0]
-        best_score = INT_MIN
-        for move in legal_moves:
-            board.push(move)
-            score = self.alphabeta(board, self.depth, color=1-board.turn)
-            board.pop()
-            if score > best_score:
-                best_move = move
-                best_score = score
-        #print("best move", best_move, "score", best_score)
-        return best_move
+        # Return best move
+        return [ms.move for ms in sorted(scores, key=lambda m_score: m_score.score)][-1]
+
+    def score_move(self, board, move, move_score):
+        board.push(move)
+        move_score.score = self.alphabeta(board, self.depth, color=1-board.turn)
+        board.pop()
   
     def alphabeta(self, board: chess.Board, depth, color, alpha=INT_MIN, beta=INT_MAX, mini=True):
         if board.is_game_over():
@@ -172,3 +176,8 @@ class EvoTableAI(PlayerAI):
         return EvoTableAI(material_val=child_material_val, table=child_table,
                            material_strat_param=child_material_strat_param, 
                            table_strat_param=child_table_strat_param)
+
+class MoveScore():
+    def __init__(self, move):
+        self.move = move
+        self.score = INT_MIN

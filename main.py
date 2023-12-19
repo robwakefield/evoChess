@@ -31,7 +31,7 @@ class ChessGUI:
         self.side_frame = ttk.Frame(root, width=100, height=self.board_size)
         self.side_frame.grid(row=0, column=0)
 
-        self.white_player = StockfishAI()
+        self.white_player = SingleTableAI(depth=2)
         self.black_player = SingleTableAI(depth=2)
 
         self.white_label = ttk.Label(self.side_frame, text=self.white_player.name)
