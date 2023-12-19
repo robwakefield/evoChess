@@ -8,7 +8,8 @@ from AI.greedyAI import GreedyAI
 from AI.randomAI import RandomAI
 from AI.defensiveAI import DefensiveAI
 from AI.stockfishAI import StockfishAI
-  
+from AI.singleTableAI import SingleTableAI
+
 class Head2Head(): 
   
     def __init__(self, player1: PlayerAI, player2: PlayerAI):
@@ -50,7 +51,8 @@ class Head2Head():
 if __name__ == "__main__":
     greedy = GreedyAI()
     defensive = DefensiveAI()
-    stockfish = StockfishAI()
+    stockfish = StockfishAI(elo=50)
+    single_table = SingleTableAI(depth=2)
     random = RandomAI()
-    h2h = Head2Head(stockfish, greedy)
-    h2h.evaluate(iterations=100)
+    h2h = Head2Head(single_table, stockfish)
+    h2h.evaluate(iterations=10)
