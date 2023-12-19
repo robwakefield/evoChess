@@ -13,6 +13,7 @@ from AI.greedyAI import GreedyAI
 from AI.defensiveAI import DefensiveAI
 from AI.stockfishAI import StockfishAI
 from AI.singleTableAI import SingleTableAI
+from AI.evoTableAI import EvoTableAI
 
 class ChessGUI:
     def __init__(self, root):
@@ -30,8 +31,8 @@ class ChessGUI:
         self.side_frame = ttk.Frame(root, width=100, height=self.board_size)
         self.side_frame.grid(row=0, column=0)
 
-        self.white_player = SingleTableAI(depth=2)
-        self.black_player = DefensiveAI()
+        self.white_player = EvoTableAI()
+        self.black_player = EvoTableAI()
 
         self.white_label = ttk.Label(self.side_frame, text=self.white_player.name)
         self.white_label.pack()
