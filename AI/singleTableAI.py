@@ -31,7 +31,7 @@ class SingleTableAI(PlayerAI):
         best_score = INT_MIN
         for move in legal_moves:
             board.push(move)
-            score = self.alphabeta(board, self.depth)
+            score = self.alphabeta(board, self.depth, color=1-board.turn)
             board.pop()
             if score > best_score:
                 best_move = move
@@ -39,7 +39,7 @@ class SingleTableAI(PlayerAI):
         #print("best move", best_move, "score", best_score)
         return best_move
   
-    def alphabeta(self, board: chess.Board, depth, alpha=INT_MIN, beta=INT_MAX, mini=True):
+    def alphabeta(self, board: chess.Board, depth, color, alpha=INT_MIN, beta=INT_MAX, mini=True):
         if board.is_game_over():
             if board.outcome().winner == None:
                 return 0
@@ -49,7 +49,7 @@ class SingleTableAI(PlayerAI):
                 return INT_MAX
     
         if depth == 0:
-            return self.evaluate_pos(board, 1-board.turn)
+            return self.evaluate_pos(board, color)
 
         legal_moves = list(board.legal_moves)
         assert len(legal_moves) > 0
@@ -57,7 +57,7 @@ class SingleTableAI(PlayerAI):
         value = INT_MAX if mini else INT_MIN
         for move in legal_moves:
             board.push(move)
-            child_score = self.alphabeta(board, depth=depth - 1, alpha=alpha, beta=beta, mini=not mini)
+            child_score = self.alphabeta(board, depth=depth - 1, color=color, alpha=alpha, beta=beta, mini=not mini)
             board.pop()
             if mini:
                 value = min(value, child_score)
