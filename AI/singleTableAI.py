@@ -20,6 +20,7 @@ class SingleTableAI(PlayerAI):
 
     def make_move(self, board: chess.Board):
         # Update search depth when in endgame
+        self.in_endgame = self.is_endgame(board)
         if self.in_endgame and self.depth == 2:
             self.depth = 4
 
@@ -101,7 +102,6 @@ class SingleTableAI(PlayerAI):
     Evaluate our position using material value and PSTs
     """
     def evaluate_pos(self, board: chess.Board, color: chess.Color):
-        self.in_endgame = self.is_endgame(board)
         material = self.material_value(color, board)
         positional = 0
         for type in reversed(chess.PIECE_TYPES):
@@ -116,9 +116,3 @@ class SingleTableAI(PlayerAI):
                 positional += table[square]
 
         return material + positional
-
-               
-               
-
-
-        
