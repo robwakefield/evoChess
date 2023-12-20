@@ -83,6 +83,9 @@ class EvoTableAI(PlayerAI):
 
         legal_moves = list(board.legal_moves)
         assert len(legal_moves) > 0
+
+        # Sort by piece to reduce branches explored in alpha-beta pruning
+        legal_moves.sort(key = lambda move: board.piece_at(move.from_square).piece_type)
         
         value = INT_MAX if mini else INT_MIN
         for move in legal_moves:
