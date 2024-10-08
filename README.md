@@ -13,6 +13,8 @@ Evolutionary algorithm chess bot with GUI
 
 To install the required python libraries run `pip install -r requirements.txt`
 
+To use scripts that include Tkinter install it based on your OS - it may already be installed with python. E.g. `brew install python-tk`
+
 # Running the Program
 
 To run the GUI use `python3 main.py`
